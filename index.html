@@ -115,7 +115,8 @@
                         <!-- Add Batch Form (Collapsible) -->
                         <div class="add-batch-collapsible" id="add-batch-panel" style="display: none;">
                             <form id="add-batch-form" class="sub-form">
-                                <h3>New Batch Details</h3>
+                                <input type="hidden" id="edit-batch-id" value="">
+                                <h3 id="batch-form-title">New Batch Details</h3>
                                 <div class="form-group">
                                     <label for="new-batch-name">Batch Name Extension (Optional)</label>
                                     <input type="text" id="new-batch-name" placeholder="e.g. GDP, Weekend Batch, New Batch">
@@ -142,7 +143,7 @@
                                 </div>
                                 <div class="sub-form-actions">
                                     <button type="button" class="btn btn-sm btn-outline" id="btn-cancel-add-batch">Cancel</button>
-                                    <button type="submit" class="btn btn-sm btn-primary">Save Batch</button>
+                                    <button type="submit" class="btn btn-sm btn-primary" id="btn-submit-batch">Save Batch</button>
                                 </div>
                             </form>
                         </div>

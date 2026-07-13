@@ -270,12 +270,20 @@ function renderBatches() {
             </td>
             <td style="color: var(--text-secondary); font-size: 12px;">${batch.schedule}</td>
             <td>
-                <button type="button" class="btn-danger-icon" onclick="deleteBatch('${batch.id}')" title="Delete Batch">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                </button>
+                <div style="display: flex; gap: 6px;">
+                    <button type="button" class="btn-edit-icon" onclick="editBatch('${batch.id}')" title="Edit Batch">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                    <button type="button" class="btn-danger-icon" onclick="deleteBatch('${batch.id}')" title="Delete Batch">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </div>
             </td>
         `;
         tbody.appendChild(tr);
@@ -479,6 +487,10 @@ function setupListeners() {
     
     // 2. Add Batch collapsibility
     document.getElementById("btn-show-add-batch").addEventListener("click", function() {
+        document.getElementById("add-batch-form").reset();
+        document.getElementById("edit-batch-id").value = "";
+        document.getElementById("batch-form-title").innerText = "New Batch Details";
+        document.getElementById("btn-submit-batch").innerText = "Save Batch";
         document.getElementById("add-batch-panel").style.display = "block";
     });
     
@@ -491,21 +503,40 @@ function setupListeners() {
     document.getElementById("add-batch-form").addEventListener("submit", function(e) {
         e.preventDefault();
         
-        const newBatch = {
-            id: "batch_" + Date.now(),
-            name: document.getElementById("new-batch-name").value,
-            start: document.getElementById("new-batch-start").value,
-            end: document.getElementById("new-batch-end").value,
-            duration: document.getElementById("new-batch-duration").value,
-            schedule: document.getElementById("new-batch-schedule").value
-        };
+        const editId = document.getElementById("edit-batch-id").value;
         
-        batches.push(newBatch);
-        localStorage.setItem("df_batches", JSON.stringify(batches));
-        showToast("Active batch added successfully!", "success");
+        if (editId) {
+            // Update existing batch details
+            const idx = batches.findIndex(b => b.id === editId);
+            if (idx !== -1) {
+                batches[idx].name = document.getElementById("new-batch-name").value;
+                batches[idx].start = document.getElementById("new-batch-start").value;
+                batches[idx].end = document.getElementById("new-batch-end").value;
+                batches[idx].duration = document.getElementById("new-batch-duration").value;
+                batches[idx].schedule = document.getElementById("new-batch-schedule").value;
+                
+                localStorage.setItem("df_batches", JSON.stringify(batches));
+                showToast("Batch updated successfully!", "success");
+            }
+        } else {
+            // Create a new batch
+            const newBatch = {
+                id: "batch_" + Date.now(),
+                name: document.getElementById("new-batch-name").value,
+                start: document.getElementById("new-batch-start").value,
+                end: document.getElementById("new-batch-end").value,
+                duration: document.getElementById("new-batch-duration").value,
+                schedule: document.getElementById("new-batch-schedule").value
+            };
+            
+            batches.push(newBatch);
+            localStorage.setItem("df_batches", JSON.stringify(batches));
+            showToast("Active batch added successfully!", "success");
+        }
         
         document.getElementById("add-batch-panel").style.display = "none";
         document.getElementById("add-batch-form").reset();
+        document.getElementById("edit-batch-id").value = "";
         
         renderBatches();
         renderWeeklyEntryForm();
@@ -617,6 +648,30 @@ window.deleteBatch = function(batchId) {
         renderWeeklyEntryForm();
         renderPreview();
     }
+};
+
+// Edit Batch
+window.editBatch = function(batchId) {
+    const batch = batches.find(b => b.id === batchId);
+    if (!batch) return;
+    
+    document.getElementById("edit-batch-id").value = batchId;
+    document.getElementById("new-batch-name").value = batch.name || "";
+    document.getElementById("new-batch-start").value = batch.start || "";
+    document.getElementById("new-batch-end").value = batch.end || "";
+    document.getElementById("new-batch-duration").value = batch.duration || "";
+    document.getElementById("new-batch-schedule").value = batch.schedule || "";
+    
+    document.getElementById("batch-form-title").innerText = "Edit Batch Details";
+    document.getElementById("btn-submit-batch").innerText = "Update Batch";
+    
+    // Show the panel
+    document.getElementById("add-batch-panel").style.display = "block";
+    
+    // Smooth scroll to the form panel
+    document.getElementById("batches-section").scrollIntoView({ behavior: 'smooth' });
+    
+    showToast("Batch details loaded into the editor form above.", "info");
 };
 
 // --- 6. EXPORT / GENERATORS LOGIC ---

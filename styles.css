@@ -388,6 +388,24 @@ select {
     color: white;
 }
 
+.btn-edit-icon {
+    background: rgba(37, 99, 235, 0.1);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    color: var(--blue);
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-edit-icon:hover {
+    background: var(--blue);
+    color: white;
+}
+
 .btn-sm {
     padding: 8px 14px;
     font-size: 12px;
