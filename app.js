@@ -879,21 +879,13 @@ function sendReportViaYahoo() {
     // 1. Download the compiled Word doc file automatically!
     downloadWordDocument();
     
-    // 2. Also copy the rich HTML table to clipboard automatically for them!
-    copyRichTableToClipboard().then(() => {
-        showToast("HTML table copied to clipboard automatically!", "info");
-    });
-    
-    // 3. Draft body text instructing the user to upload the downloaded document
-    const body = `Hi,\n\nHere is my weekly monitoring sheet report for Week ${targetWeek}.\n\n` + 
-                 `[PLEASE DRAG & DROP OR ATTACH THE DOWNLOADED WORD FILE: Niggas_Monitoring_Sheet_${profile.tutorName.replace(/\s+/g, "_")}_${profile.reportMonth}.doc]\n\n` + 
-                 `Summary Details:\n------------------\n` + 
-                 extractPlainTextReport();
+    // 2. Draft a simple body text (no plain text conversion of the document)
+    const body = `Hi,\n\nPlease find attached my weekly monitoring sheet.`;
                  
     // Yahoo Mail compose URL structure
     const yahooUrl = `https://compose.mail.yahoo.com/?to=${encodeURIComponent(recipient)}&subj=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
-    // 4. Open Yahoo Mail Compose in new tab
+    // 3. Open Yahoo Mail Compose in new tab
     window.open(yahooUrl, "_blank");
     showToast("Word document downloaded and Yahoo Mail compose opened!", "success");
 }
