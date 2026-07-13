@@ -5,8 +5,7 @@ const DEFAULT_PROFILE = {
     tutorName: "Daniel Anyamene",
     programName: "Frontend",
     reportMonth: "July",
-    batchIndexing: "letters", // 'letters' or 'numbers'
-    bossEmail: "danielanyamene@yahoo.com" // Default boss email
+    batchIndexing: "letters" // 'letters' or 'numbers'
 };
 
 const DEFAULT_BATCHES = [
@@ -238,7 +237,6 @@ function renderProfile() {
     document.getElementById("program-name").value = profile.programName || "";
     document.getElementById("report-month").value = profile.reportMonth || "July";
     document.getElementById("batch-indexing").value = profile.batchIndexing || "letters";
-    document.getElementById("boss-email").value = profile.bossEmail || "";
 }
 
 // Render active batches
@@ -475,7 +473,6 @@ function setupListeners() {
         profile.programName = document.getElementById("program-name").value;
         profile.reportMonth = document.getElementById("report-month").value;
         profile.batchIndexing = document.getElementById("batch-indexing").value;
-        profile.bossEmail = document.getElementById("boss-email").value;
         
         localStorage.setItem("df_profile", JSON.stringify(profile));
         showToast("Profile settings saved successfully!", "success");
@@ -876,27 +873,29 @@ function extractPlainTextReport() {
 // Prefill and open Yahoo Mail compose window
 function sendReportViaYahoo() {
     const targetWeek = document.getElementById("preview-target-week").value;
-    const recipient = profile.bossEmail || "";
+    const recipient = ""; // Empty recipient so they enter it manually in Yahoo Mail
     const subject = `Niggas Monitoring Sheet - ${profile.reportMonth} - ${profile.tutorName} - Week ${targetWeek}`;
     
-    // First, copy the rich HTML table to clipboard automatically for them!
+    // 1. Download the compiled Word doc file automatically!
+    downloadWordDocument();
+    
+    // 2. Also copy the rich HTML table to clipboard automatically for them!
     copyRichTableToClipboard().then(() => {
-        // Inform them that the rich copy succeeded
         showToast("HTML table copied to clipboard automatically!", "info");
     });
     
+    // 3. Draft body text instructing the user to upload the downloaded document
     const body = `Hi,\n\nHere is my weekly monitoring sheet report for Week ${targetWeek}.\n\n` + 
-                 `[PASTE YOUR RICH TABLE HERE (Ctrl+V) OR ATTACH THE DOWNLOADED WORD DOC]\n\n` + 
+                 `[PLEASE DRAG & DROP OR ATTACH THE DOWNLOADED WORD FILE: Niggas_Monitoring_Sheet_${profile.tutorName.replace(/\s+/g, "_")}_${profile.reportMonth}.doc]\n\n` + 
                  `Summary Details:\n------------------\n` + 
                  extractPlainTextReport();
                  
-    // Yahoo Mail compose URL structure:
-    // https://compose.mail.yahoo.com/?to=boss@example.com&subj=SubjectText&body=BodyText
+    // Yahoo Mail compose URL structure
     const yahooUrl = `https://compose.mail.yahoo.com/?to=${encodeURIComponent(recipient)}&subj=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
-    // Open in new tab
+    // 4. Open in new tab
     window.open(yahooUrl, "_blank");
-    showToast("Opened Yahoo Mail compose in a new tab!", "success");
+    showToast("Word document downloaded and Yahoo Mail compose opened!", "success");
 }
 
 // --- 7. STARTUP SETUP ---
