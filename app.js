@@ -944,6 +944,13 @@ document.addEventListener("DOMContentLoaded", function() {
             showToast(`Welcome to ${window.dfNewMonthAlert}! A new month has started: weekly activity details are reset to blank.`, "info");
             window.dfNewMonthAlert = null;
         }
-        console.log("Atomic clock sync completed.");
     });
+
+    // 3. Smoothly fade out the welcome loader screen after 2 seconds
+    setTimeout(() => {
+        const overlay = document.getElementById("loading-overlay");
+        if (overlay) {
+            overlay.classList.add("fade-out");
+        }
+    }, 2000);
 });
