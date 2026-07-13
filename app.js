@@ -5,7 +5,9 @@ const DEFAULT_PROFILE = {
     tutorName: "Daniel Anyamene",
     programName: "Frontend",
     reportMonth: "July",
-    batchIndexing: "letters" // 'letters' or 'numbers'
+    batchIndexing: "letters", // 'letters' or 'numbers'
+    tutorEmail: "",
+    tutorPassword: ""
 };
 
 const DEFAULT_BATCHES = [
@@ -237,6 +239,8 @@ function renderProfile() {
     document.getElementById("program-name").value = profile.programName || "";
     document.getElementById("report-month").value = profile.reportMonth || "July";
     document.getElementById("batch-indexing").value = profile.batchIndexing || "letters";
+    document.getElementById("tutor-email").value = profile.tutorEmail || "";
+    document.getElementById("tutor-password").value = profile.tutorPassword || "";
 }
 
 // Render active batches
@@ -473,6 +477,8 @@ function setupListeners() {
         profile.programName = document.getElementById("program-name").value;
         profile.reportMonth = document.getElementById("report-month").value;
         profile.batchIndexing = document.getElementById("batch-indexing").value;
+        profile.tutorEmail = document.getElementById("tutor-email").value;
+        profile.tutorPassword = document.getElementById("tutor-password").value;
         
         localStorage.setItem("df_profile", JSON.stringify(profile));
         showToast("Profile settings saved successfully!", "success");
@@ -870,32 +876,94 @@ function extractPlainTextReport() {
     return txt;
 }
 
-// Prefill and open Yahoo Mail compose window
+// Send report via local server SMTP endpoint
 function sendReportViaYahoo() {
+    // 1. Verify that sender credentials are set
+    if (!profile.tutorEmail || !profile.tutorPassword) {
+        showToast("Please save your Yahoo/Turbify Email and App Password in the settings form first!", "danger");
+        document.getElementById("profile-section").scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+    
     const targetWeek = document.getElementById("preview-target-week").value;
-    const recipient = ""; // Empty recipient so they enter it manually in Yahoo Mail
+    
+    // 2. Prompt for Boss/Recipient email address on the fly (remembers last entry)
+    const lastRecipient = localStorage.getItem("df_last_recipient") || "";
+    const recipient = prompt("Enter Recipient Email Address (Boss):", lastRecipient);
+    
+    if (!recipient || recipient.trim() === "") {
+        showToast("Send cancelled. Recipient email address is required.", "warning");
+        return;
+    }
+    
+    // Save recipient to remember for next time
+    localStorage.setItem("df_last_recipient", recipient.trim());
+    
     const subject = `Niggas Monitoring Sheet - ${profile.reportMonth} - ${profile.tutorName} - Week ${targetWeek}`;
+    const docFilename = `Niggas_Monitoring_Sheet_${profile.tutorName.replace(/\s+/g, "_")}_${profile.reportMonth}.doc`;
     
-    // 1. Download the compiled Word doc file automatically!
-    downloadWordDocument();
-    
-    // 2. Also copy the rich HTML table to clipboard automatically for them!
-    copyRichTableToClipboard().then(() => {
-        showToast("HTML table copied to clipboard automatically!", "info");
-    });
-    
-    // 3. Draft body text instructing the user to upload the downloaded document
     const body = `Hi,\n\nHere is my weekly monitoring sheet report for Week ${targetWeek}.\n\n` + 
-                 `[PLEASE DRAG & DROP OR ATTACH THE DOWNLOADED WORD FILE: Niggas_Monitoring_Sheet_${profile.tutorName.replace(/\s+/g, "_")}_${profile.reportMonth}.doc]\n\n` + 
+                 `Please find the beautifully formatted report table below and the compiled MS Word document attached.\n\n` + 
                  `Summary Details:\n------------------\n` + 
                  extractPlainTextReport();
                  
-    // Yahoo Mail compose URL structure
-    const yahooUrl = `https://compose.mail.yahoo.com/?to=${encodeURIComponent(recipient)}&subj=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const htmlReport = compileCleanReportHTML();
     
-    // 4. Open in new tab
-    window.open(yahooUrl, "_blank");
-    showToast("Word document downloaded and Yahoo Mail compose opened!", "success");
+    // Show a loading toast and update the send button text
+    showToast("Connecting to Yahoo Mail and sending email...", "info");
+    
+    const sendBtn = document.getElementById("btn-send-email");
+    const originalText = sendBtn.innerHTML;
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = `
+        <span class="spinner" style="display:inline-block; width:14px; height:14px; border:2px solid #fff; border-radius:50%; border-top-color:transparent; animation:spin 1s linear infinite; margin-right:8px; vertical-align:middle;"></span>
+        <span>Sending...</span>
+    `;
+    
+    // Inject dynamic keyframe spinner style if not already present
+    if (!document.getElementById("spinner-styles")) {
+        const style = document.createElement("style");
+        style.id = "spinner-styles";
+        style.innerHTML = "@keyframes spin { to { transform: rotate(360deg); } }";
+        document.head.appendChild(style);
+    }
+
+    // Make AJAX request to local Python backend to send mail with attachment!
+    fetch("/api/send", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            tutorEmail: profile.tutorEmail,
+            tutorPassword: profile.tutorPassword,
+            recipient: recipient.trim(),
+            subject: subject,
+            body: body,
+            html: htmlReport,
+            docFilename: docFilename,
+            docContent: htmlReport // Compile clean HTML report payload
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errData => {
+                throw new Error(errData.error || "Failed to send email via server.");
+            });
+        }
+        return response.json();
+    })
+    .then(result => {
+        showToast("Report sent successfully with Word attachment!", "success");
+    })
+    .catch(error => {
+        console.error("Error sending email:", error);
+        showToast(`Failed to send: ${error.message}. Please check credentials or SMTP settings.`, "danger");
+    })
+    .finally(() => {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = originalText;
+    });
 }
 
 // --- 7. STARTUP SETUP ---
