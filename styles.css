@@ -913,6 +913,21 @@ select {
         overflow-x: auto;
     }
     
+    /* Prevent mobile input auto-zooming on focus */
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+
+    .week-tabs-container {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap !important;
+    }
+    
     /* Responsive Loader Overlay styles */
     .loader-title {
         font-size: 28px !important;
