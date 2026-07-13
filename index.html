@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIGGAS - Niggas Monitoring Sheet Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo-container">
+                <div class="brand-title">
+                    <span class="gradient-text font-outfit font-extrabold" style="font-size: 28px;">NIGGAS</span>
+                    <span class="sub-brand">Niggas Monitoring Sheet Portal</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <span class="current-date-badge" id="current-date-display">Monday, July 13, 2026</span>
+            </div>
+        </header>
+
+        <!-- Main Layout Split -->
+        <div class="main-grid">
+            
+            <!-- Left Panel: Profile & Batches -->
+            <div class="left-column">
+                
+                <!-- Section: Tutor Profile -->
+                <section class="glass-card" id="profile-section">
+                    <div class="card-header">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <h2>Instructor Profile</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="profile-form">
+                            <div class="form-group">
+                                <label for="tutor-name">Instructor Name</label>
+                                <input type="text" id="tutor-name" placeholder="e.g. Daniel Anyamene" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="program-name">Program / Subject</label>
+                                <input type="text" id="program-name" placeholder="e.g. Frontend" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label for="report-month">Report Month</label>
+                                    <select id="report-month">
+                                        <option value="January">January</option>
+                                        <option value="February">February</option>
+                                        <option value="March">March</option>
+                                        <option value="April">April</option>
+                                        <option value="May">May</option>
+                                        <option value="June">June</option>
+                                        <option value="July">July</option>
+                                        <option value="August">August</option>
+                                        <option value="September">September</option>
+                                        <option value="October">October</option>
+                                        <option value="November">November</option>
+                                        <option value="December">December</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="batch-indexing">Batch Naming Prefixes</label>
+                                    <select id="batch-indexing">
+                                        <option value="letters">Letters (A, B, C...)</option>
+                                        <option value="numbers">Numbers (1, 2, 3...)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="boss-email">Recipient Email (Boss)</label>
+                                <input type="email" id="boss-email" placeholder="e.g. boss@digitalfortress.com" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <span>Save Settings</span>
+                            </button>
+                            <div class="settings-extra-actions" style="margin-top: 14px; display: flex; gap: 12px;">
+                                <button type="button" class="btn btn-sm btn-outline col-6" id="btn-reset-month" style="font-size: 11px; padding: 8px 4px;">Reset Month</button>
+                                <button type="button" class="btn btn-sm btn-outline col-6" id="btn-load-demo" style="font-size: 11px; padding: 8px 4px;">Load Demo</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Section: Active Batches Editor -->
+                <section class="glass-card" id="batches-section">
+                    <div class="card-header">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <h2>Active Batches</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Add Batch Trigger -->
+                        <div class="batch-list-header">
+                            <p class="section-desc">Manage batches currently running this month.</p>
+                            <button class="btn btn-sm btn-secondary" id="btn-show-add-batch" type="button">
+                                <span>+ Add Batch</span>
+                            </button>
+                        </div>
+
+                        <!-- Add Batch Form (Collapsible) -->
+                        <div class="add-batch-collapsible" id="add-batch-panel" style="display: none;">
+                            <form id="add-batch-form" class="sub-form">
+                                <h3>New Batch Details</h3>
+                                <div class="form-group">
+                                    <label for="new-batch-name">Batch Name Extension (Optional)</label>
+                                    <input type="text" id="new-batch-name" placeholder="e.g. GDP, Weekend Batch, New Batch">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6">
+                                        <label for="new-batch-start">Start Date</label>
+                                        <input type="text" id="new-batch-start" placeholder="e.g. February" required>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label for="new-batch-end">End Date</label>
+                                        <input type="text" id="new-batch-end" placeholder="e.g. July or _________" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6">
+                                        <label for="new-batch-duration">Duration (Optional)</label>
+                                        <input type="text" id="new-batch-duration" placeholder="e.g. 6 Months">
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label for="new-batch-schedule">Schedule / Days & Time</label>
+                                        <input type="text" id="new-batch-schedule" placeholder="e.g. Mondays - Wednesdays" required>
+                                    </div>
+                                </div>
+                                <div class="sub-form-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" id="btn-cancel-add-batch">Cancel</button>
+                                    <button type="submit" class="btn btn-sm btn-primary">Save Batch</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Active Batches List Table -->
+                        <div class="batches-table-wrapper">
+                            <table class="data-table" id="batches-table">
+                                <thead>
+                                    <tr>
+                                        <th>Prefix</th>
+                                        <th>Name</th>
+                                        <th>Schedule</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batches-list-body">
+                                    <!-- Populated by JS -->
+                                    <tr class="empty-state-row">
+                                        <td colspan="4">No batches added yet. Click "+ Add Batch" above to start.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Panel: Weekly Sheet Entry & Output -->
+            <div class="right-column">
+                
+                <!-- Section: Weekly Details Forms -->
+                <section class="glass-card main-entry-card" id="details-section">
+                    <div class="card-header main-header-flex">
+                        <div class="title-with-icon">
+                            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            <h2>Weekly Activity Details</h2>
+                        </div>
+                        <div class="week-tabs-container" id="week-tabs-list">
+                            <!-- Week Tabs 1 to 5 generated by JS -->
+                            <button type="button" class="tab-btn active" data-week="1">Week 1</button>
+                            <button type="button" class="tab-btn" data-week="2">Week 2</button>
+                            <button type="button" class="tab-btn" data-week="3">Week 3</button>
+                            <button type="button" class="tab-btn" data-week="4">Week 4</button>
+                            <button type="button" class="tab-btn" data-week="5">Week 5</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body scrollable-body">
+                        <!-- Instructions -->
+                        <div class="alert-info-box">
+                            <p><strong>Note:</strong> Report details are created automatically for each active batch. Adjust batches on the left to add or remove rows. Report compiles cumulatively (e.g. Week 2 carries Week 1 details).</p>
+                        </div>
+
+                        <!-- Form for Selected Week -->
+                        <form id="weekly-details-form">
+                            <input type="hidden" id="active-week-num" value="1">
+                            
+                            <div class="weekly-rows-container" id="weekly-rows-container">
+                                <!-- Generated by JS depending on active batches and selected week -->
+                                <div class="empty-state-weeks">
+                                    <p>Please configure your <strong>Instructor Profile</strong> and add at least one <strong>Active Batch</strong> to begin filling report details.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions-sticky">
+                                <div class="info-save-status" id="save-status-msg">Changes saved locally.</div>
+                                <button type="submit" class="btn btn-primary">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                        <polyline points="7 3 7 8 15 8"></polyline>
+                                    </svg>
+                                    <span>Save Week Progress</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Section: Preview and Send Actions -->
+                <section class="glass-card action-card" id="actions-section">
+                    <div class="card-header">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                        <h2>Preview & Send Report</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="report-options-bar">
+                            <div class="option-field">
+                                <label for="preview-target-week">Compile up to:</label>
+                                <select id="preview-target-week">
+                                    <option value="1">Week 1</option>
+                                    <option value="2">Week 2</option>
+                                    <option value="3">Week 3</option>
+                                    <option value="4">Week 4</option>
+                                    <option value="5">Week 5</option>
+                                </select>
+                            </div>
+                            <p class="preview-explanation">Compiling will aggregate all weeks up to the selection into the final document and clipboard.</p>
+                        </div>
+
+                        <!-- Live Sheet Preview -->
+                        <div class="live-preview-box">
+                            <div class="preview-header-meta">
+                                <div class="preview-meta-title" id="preview-meta-title">NIGGAS MONITORING SHEET</div>
+                                <div class="preview-meta-details">
+                                    <span id="preview-meta-month">Month: July</span> | 
+                                    <span id="preview-meta-program">Program: Frontend</span> | 
+                                    <span id="preview-meta-instructor">Instructor: Daniel Anyamene</span>
+                                </div>
+                            </div>
+                            <div class="preview-tables-content" id="preview-tables-content">
+                                <!-- Tables rendered by JS -->
+                                <p style="text-align: center; color: #8a8d9a; padding: 20px 0;">No active batches or report data to preview.</p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons Grid -->
+                        <div class="action-buttons-grid">
+                            <button class="btn btn-accent btn-large" id="btn-send-email" type="button">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                <div class="btn-double-label">
+                                    <span class="label-primary">Send Weekly Report</span>
+                                    <span class="label-sub">Opens Yahoo Mail Compose</span>
+                                </div>
+                            </button>
+
+                            <button class="btn btn-secondary btn-large" id="btn-copy-clipboard" type="button">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <div class="btn-double-label">
+                                    <span class="label-primary">Copy Rich Table</span>
+                                    <span class="label-sub">Paste directly into Email Body</span>
+                                </div>
+                            </button>
+
+                            <button class="btn btn-secondary btn-large" id="btn-download-word" type="button">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                                    <polyline points="9 15 12 18 15 15"></polyline>
+                                </svg>
+                                <div class="btn-double-label">
+                                    <span class="label-primary">Download Word Doc</span>
+                                    <span class="label-sub">Saves as .doc file</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
