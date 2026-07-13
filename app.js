@@ -595,10 +595,7 @@ function setupListeners() {
         renderPreview();
     });
     
-    // 7. Clipboard Copy Action
-    document.getElementById("btn-copy-clipboard").addEventListener("click", function() {
-        copyRichTableToClipboard();
-    });
+
     
     // 8. Word Doc Download Action
     document.getElementById("btn-download-word").addEventListener("click", function() {
