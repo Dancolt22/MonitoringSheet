@@ -872,18 +872,18 @@ function extractPlainTextReport() {
 
 // Trigger .doc download and open Yahoo Mail compose tab (manual attachment)
 function sendReportViaYahoo() {
-    const targetWeek = document.getElementById("preview-target-week").value;
-    const recipient = ""; // Empty recipient so they can select it manually in Yahoo Mail
-    const subject = `Niggas Monitoring Sheet - ${profile.reportMonth} - ${profile.tutorName} - Week ${targetWeek}`;
+    const recipient = "akowonjoaccount@digitalfortressltd.com";
+    const cc = "Gideon";
+    const subject = `${profile.reportMonth} Monitoring sheet`;
     
     // 1. Download the compiled Word doc file automatically!
     downloadWordDocument();
     
-    // 2. Draft a simple body text (no plain text conversion of the document)
-    const body = `Hi,\n\nPlease find attached my weekly monitoring sheet.`;
+    // 2. Draft the exact simple body text from the picture
+    const body = `Kindly find attached`;
                  
-    // Yahoo Mail compose URL structure
-    const yahooUrl = `https://compose.mail.yahoo.com/?to=${encodeURIComponent(recipient)}&subj=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // Yahoo Mail compose URL structure with To, Cc, Subject, and Body
+    const yahooUrl = `https://compose.mail.yahoo.com/?to=${encodeURIComponent(recipient)}&cc=${encodeURIComponent(cc)}&subj=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
     // 3. Open Yahoo Mail Compose in new tab
     window.open(yahooUrl, "_blank");
