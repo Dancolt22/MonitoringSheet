@@ -620,6 +620,41 @@ function setupListeners() {
             loadDemoTemplate();
         }
     });
+
+    // Gamepad Modal Listeners
+    const gamepadBadge = document.getElementById("btn-gamepad-reminder");
+    if (gamepadBadge) {
+        gamepadBadge.addEventListener("click", openGamepadModal);
+    }
+    
+    const gamepadClose = document.getElementById("btn-close-gamepad-modal");
+    if (gamepadClose) {
+        gamepadClose.addEventListener("click", closeGamepadModal);
+    }
+    
+    const gamepadAcknowledge = document.getElementById("btn-acknowledge-gamepad");
+    if (gamepadAcknowledge) {
+        gamepadAcknowledge.addEventListener("click", function() {
+            closeGamepadModal();
+            localStorage.setItem("df_gamepad_budget_acknowledged", "true");
+            showToast("Awesome! Gamepad budget recorded in next month's planning.", "success");
+        });
+    }
+}
+
+// --- 5.5 GAMEPAD BUDGET MODAL LOGIC ---
+function openGamepadModal() {
+    const modal = document.getElementById("gamepad-modal");
+    if (modal) {
+        modal.classList.add("active");
+    }
+}
+
+function closeGamepadModal() {
+    const modal = document.getElementById("gamepad-modal");
+    if (modal) {
+        modal.classList.remove("active");
+    }
 }
 
 // Delete Batch
@@ -953,4 +988,12 @@ document.addEventListener("DOMContentLoaded", function() {
             overlay.classList.add("fade-out");
         }
     }, 2000);
+
+    // 4. Auto-open Gamepad Budget Modal after 2.5 seconds if not yet acknowledged
+    setTimeout(() => {
+        const acknowledged = localStorage.getItem("df_gamepad_budget_acknowledged");
+        if (acknowledged !== "true") {
+            openGamepadModal();
+        }
+    }, 2500);
 });

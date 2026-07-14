@@ -33,6 +33,9 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button class="gamepad-badge-btn" id="btn-gamepad-reminder" type="button">
+                    <span>🎮 Gamepad</span>
+                </button>
                 <span class="current-date-badge" id="current-date-display">Monday, July 13, 2026</span>
             </div>
         </header>
@@ -313,6 +316,28 @@
 
     <!-- Notification Toast -->
     <div class="toast-container" id="toast-container"></div>
+
+    <!-- Gamepad Budget Alert Modal -->
+    <div class="modal-overlay" id="gamepad-modal">
+        <div class="gamepad-modal-card">
+            <button class="modal-close-btn" id="btn-close-gamepad-modal" type="button" aria-label="Close">&times;</button>
+            <div class="modal-gamepad-icon">🎮</div>
+            <h2 class="gamepad-modal-title font-outfit font-extrabold">
+                <span class="gradient-text">Gamepad</span> Budget
+            </h2>
+            <p class="gamepad-modal-text">
+                Attention Niggas! We want to contribute to buy <strong>PC game controllers</strong> and we are to contribute <span class="gamepad-modal-accent">₦3,000</span> each.
+            </p>
+            <p class="gamepad-modal-text" style="font-size: 13px; color: var(--text-secondary); border-top: 1px dashed var(--border-glass-hover); padding-top: 15px;">
+                🚨 <strong>Precise Fixation:</strong> Remember to budget this towards next month!
+            </p>
+            <div class="gamepad-modal-actions">
+                <button class="btn btn-primary" id="btn-acknowledge-gamepad" type="button" style="padding: 10px 24px;">
+                    <span>Acknowledge & Save to Budget</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js?v=1.0.4"></script>
 </body>
