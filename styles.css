@@ -671,6 +671,10 @@ select {
     gap: 10px;
 }
 
+.option-field.toggle-field {
+    gap: 12px;
+}
+
 .option-field label {
     margin-bottom: 0;
     white-space: nowrap;
@@ -680,6 +684,62 @@ select {
     padding: 6px 36px 6px 12px;
     font-size: 13px;
     background-color: var(--bg-app);
+}
+
+/* Custom Switch Toggle styling */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 22px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    transition: var(--transition-fast);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--text-secondary);
+    transition: var(--transition-fast);
+}
+
+input:checked + .slider {
+    background: var(--gradient-cyan);
+    border-color: rgba(6, 182, 212, 0.4);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+}
+
+input:checked + .slider:before {
+    background-color: #ffffff;
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 22px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
 }
 
 .preview-explanation {
@@ -850,6 +910,17 @@ select {
 @media (max-width: 768px) {
     .app-container {
         padding: 12px;
+    }
+    
+    .report-options-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .preview-explanation {
+        max-width: 100%;
+        text-align: left;
     }
     
     .app-header {

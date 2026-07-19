@@ -58,6 +58,7 @@ const DEFAULT_WEEKLY_DATA = {
 let profile = JSON.parse(localStorage.getItem("df_profile")) || null;
 let batches = JSON.parse(localStorage.getItem("df_batches")) || null;
 let weeklyData = JSON.parse(localStorage.getItem("df_weekly_data")) || null;
+let retainPreviousWeeks = localStorage.getItem("df_retain_previous_weeks") !== "false";
 
 // --- 1.5 ONLINE DATE FETCHING UTILITY ---
 let onlineDate = null;
@@ -395,7 +396,8 @@ function renderPreview() {
     previewContent.appendChild(tempDiv.firstElementChild);
     
     // 2. Render Activity Tables for each week up to targetWeek
-    for (let w = 1; w <= targetWeek; w++) {
+    const startWeek = retainPreviousWeeks ? 1 : targetWeek;
+    for (let w = startWeek; w <= targetWeek; w++) {
         const weekHeader = document.createElement("div");
         weekHeader.className = "preview-week-header";
         weekHeader.innerText = `WEEK ${w}`;
@@ -595,6 +597,18 @@ function setupListeners() {
         renderPreview();
     });
     
+    // 7. Toggle Retain Previous Weeks change
+    const toggleRetainWeeksInput = document.getElementById("toggle-retain-weeks");
+    if (toggleRetainWeeksInput) {
+        toggleRetainWeeksInput.checked = retainPreviousWeeks;
+        toggleRetainWeeksInput.addEventListener("change", function() {
+            retainPreviousWeeks = this.checked;
+            localStorage.setItem("df_retain_previous_weeks", retainPreviousWeeks.toString());
+            renderPreview();
+            showToast(retainPreviousWeeks ? "Retaining previous weeks in compile/preview." : "Only compile/preview selected week.", "info");
+        });
+    }
+    
 
     
     // 8. Word Doc Download Action
@@ -759,7 +773,8 @@ function compileCleanReportHTML() {
         </table>
     `;
     
-    for (let w = 1; w <= targetWeek; w++) {
+    const startWeek = retainPreviousWeeks ? 1 : targetWeek;
+    for (let w = startWeek; w <= targetWeek; w++) {
         html += `
             <div class="section-header">WEEK ${w}</div>
             <table>
@@ -886,7 +901,8 @@ function extractPlainTextReport() {
     });
     txt += `\n`;
     
-    for (let w = 1; w <= targetWeek; w++) {
+    const startWeek = retainPreviousWeeks ? 1 : targetWeek;
+    for (let w = startWeek; w <= targetWeek; w++) {
         txt += `=== WEEK ${w} ===\n`;
         batches.forEach((batch, index) => {
             const name = getBatchDisplayName(batch, index);
