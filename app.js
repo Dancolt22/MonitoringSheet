@@ -55,10 +55,12 @@ const DEFAULT_WEEKLY_DATA = {
 };
 
 // --- 2. LOCAL STORAGE / STATE MANAGEMENT ---
+const DEFAULT_NOTICE = "Remember to bear in mind that we are contributing for the game controller this coming month. Fee is ₦3,000 per Nigga 😊";
 let profile = JSON.parse(localStorage.getItem("df_profile")) || null;
 let batches = JSON.parse(localStorage.getItem("df_batches")) || null;
 let weeklyData = JSON.parse(localStorage.getItem("df_weekly_data")) || null;
 let retainPreviousWeeks = localStorage.getItem("df_retain_previous_weeks") !== "false";
+let noticeText = localStorage.getItem("df_notice_text") || DEFAULT_NOTICE;
 
 // --- 1.5 ONLINE DATE FETCHING UTILITY ---
 let onlineDate = null;
@@ -238,6 +240,15 @@ function renderProfile() {
     document.getElementById("program-name").value = profile.programName || "";
     document.getElementById("report-month").value = profile.reportMonth || "July";
     document.getElementById("batch-indexing").value = profile.batchIndexing || "letters";
+    
+    const noticeInput = document.getElementById("notice-text");
+    if (noticeInput) {
+        noticeInput.value = noticeText;
+    }
+    const runningNotice = document.getElementById("running-notice-text");
+    if (runningNotice) {
+        runningNotice.innerText = noticeText;
+    }
 }
 
 // Render active batches
@@ -477,6 +488,17 @@ function setupListeners() {
         profile.batchIndexing = document.getElementById("batch-indexing").value;
         
         localStorage.setItem("df_profile", JSON.stringify(profile));
+        
+        const noticeInput = document.getElementById("notice-text");
+        if (noticeInput) {
+            noticeText = noticeInput.value;
+            localStorage.setItem("df_notice_text", noticeText);
+            const runningNotice = document.getElementById("running-notice-text");
+            if (runningNotice) {
+                runningNotice.innerText = noticeText;
+            }
+        }
+        
         showToast("Profile settings saved successfully!", "success");
         
         renderBatches();
@@ -634,41 +656,6 @@ function setupListeners() {
             loadDemoTemplate();
         }
     });
-
-    // Gamepad Modal Listeners
-    const gamepadBadge = document.getElementById("btn-gamepad-reminder");
-    if (gamepadBadge) {
-        gamepadBadge.addEventListener("click", openGamepadModal);
-    }
-    
-    const gamepadClose = document.getElementById("btn-close-gamepad-modal");
-    if (gamepadClose) {
-        gamepadClose.addEventListener("click", closeGamepadModal);
-    }
-    
-    const gamepadAcknowledge = document.getElementById("btn-acknowledge-gamepad");
-    if (gamepadAcknowledge) {
-        gamepadAcknowledge.addEventListener("click", function() {
-            closeGamepadModal();
-            localStorage.setItem("df_gamepad_budget_acknowledged", "true");
-            showToast("Awesome! Gamepad budget recorded in next month's planning.", "success");
-        });
-    }
-}
-
-// --- 5.5 GAMEPAD BUDGET MODAL LOGIC ---
-function openGamepadModal() {
-    const modal = document.getElementById("gamepad-modal");
-    if (modal) {
-        modal.classList.add("active");
-    }
-}
-
-function closeGamepadModal() {
-    const modal = document.getElementById("gamepad-modal");
-    if (modal) {
-        modal.classList.remove("active");
-    }
 }
 
 // Delete Batch
@@ -1005,11 +992,4 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }, 2000);
 
-    // 4. Auto-open Gamepad Budget Modal after 2.5 seconds if not yet acknowledged
-    setTimeout(() => {
-        const acknowledged = localStorage.getItem("df_gamepad_budget_acknowledged");
-        if (acknowledged !== "true") {
-            openGamepadModal();
-        }
-    }, 2500);
 });
